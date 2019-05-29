@@ -36,5 +36,5 @@ dependencies {
     // Glide
     implementation "com.github.bumptech.glide:glide:$glide_version"
     kapt "com.github.bumptech.glide:compiler:$glide_version"
-    api project(':linkedinlogin')
+    implementation 'com.github.Mindinventory:LinkedInLogin:0.0.1'
 }
