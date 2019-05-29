@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                             if (linkedInUser != null) {
                                 buttonLogin.visibility = View.GONE
                                 tvUserDetails.text =
+
                                     "${linkedInUser.firstName}${linkedInUser.lastName}\n\n${linkedInUser.email}"
                                 ivUserImage.loadImage(linkedInUser.image, RequestOptions.circleCropTransform())
                             }
