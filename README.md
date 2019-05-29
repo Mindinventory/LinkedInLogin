@@ -1,10 +1,10 @@
 # Linkedin Login 
 
-This provides the webview to Login with Linked in and getting callback to your activity of fragment
+This provides the webview to Login with Linked in and getting callback to your activity or fragment
 
 ### Key Features
 
-* Integrate Linkedin Login Integration  
+* Integrate Linkedin Login
 
 # Usage
 
@@ -30,7 +30,7 @@ This provides the webview to Login with Linked in and getting callback to your a
     ```groovy
         dependencies {
             ...
-            implementation 'com.github.Mindinventory:LinkedinLogin:0.0.1'
+            implementation 'com.github.Mindinventory:LinkedInLogin:0.0.1'
         }
     ``` 
     
