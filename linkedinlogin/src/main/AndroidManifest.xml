@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.mindinventory.linkedinlogin">
     <application>
-        <activity android:name=".MiLinkedInActivity"
+        <activity android:name=".presentation.MiLinkedInActivity"
                   android:theme="@style/AppThemeTransparent">
         </activity>
     </application>
