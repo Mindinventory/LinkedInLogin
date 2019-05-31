@@ -16,7 +16,20 @@ import com.mindinventory.linkedinlogin.data.UserEmailResponse
 import com.mindinventory.linkedinlogin.data.UserListResponse
 import com.mindinventory.linkedinlogin.domain.ApiParam
 import com.mindinventory.linkedinlogin.domain.WebApiClient
-import com.mindinventory.linkedinlogin.utils.*
+import com.mindinventory.linkedinlogin.utils.KeyUtils
+import com.mindinventory.linkedinlogin.utils.KeyUtils.AUTHORIZATION_CODE
+import com.mindinventory.linkedinlogin.utils.KeyUtils.AUTHORIZATION_VALUE
+import com.mindinventory.linkedinlogin.utils.KeyUtils.BEARER
+import com.mindinventory.linkedinlogin.utils.KeyUtils.CLIENT_ID_KEY
+import com.mindinventory.linkedinlogin.utils.KeyUtils.CODE
+import com.mindinventory.linkedinlogin.utils.KeyUtils.COMMON_URL
+import com.mindinventory.linkedinlogin.utils.KeyUtils.ERROR
+import com.mindinventory.linkedinlogin.utils.KeyUtils.KEY_LINKEDIN_CONTENT
+import com.mindinventory.linkedinlogin.utils.KeyUtils.REDIRECT_URI_KEY
+import com.mindinventory.linkedinlogin.utils.KeyUtils.RESPONSE_TYPE
+import com.mindinventory.linkedinlogin.utils.KeyUtils.SCOPE
+import com.mindinventory.linkedinlogin.utils.KeyUtils.STATE
+import com.mindinventory.linkedinlogin.utils.ShowToastUtils
 import kotlinx.android.synthetic.main.activity_mi_linked_in.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -24,64 +37,34 @@ import retrofit2.Response
 import java.util.*
 
 class MiLinkedInActivity : AppCompatActivity() {
-    companion object {
-        const val REQUEST_CODE = 101
-        const val KEY_LINKEDIN_CONTENT = "key_linkedin_detail_data"
-        const val KEY_LINKEDIN_DETAIL_DATA = "key_linkedin_detail_data"
-        fun startLinkedInActivityForDetails(
-            activity: Activity,
-            clientId: String,
-            clientSecret: String,
-            rediecturi: String,
-            stateValue: String
-        ) {
-            val intent = Intent(activity, MiLinkedInActivity::class.java).apply {
-                putExtra(
-                    KEY_LINKEDIN_CONTENT,
-                    KEY_LINKEDIN_DETAIL_DATA
-                )
-                putExtra(CLIENT_ID, clientId)
-                putExtra(CLIENT_SECRET, clientSecret)
-                putExtra(REDIRECT_URI, rediecturi)
-                putExtra(STATE_VALUE, stateValue)
-            }
-            activity.startActivityForResult(
-                intent,
-                REQUEST_CODE
-            )
-        }
-    }
-
     lateinit var cookieManager: CookieManager
     var userDetails = LinkedInUserDetails()
-    var OAUTHURL: String? = null
-    var clientId = ""
-    var clientSecret = ""
-    var linkedInData = ""
-    var redirectUri = ""
-    var accessToken = ""
-    var stateValue = ""
+    var oAuthUrl: String? = null
+    var clientId: String? = null
+    var clientSecret: String? = null
+    var redirectUri: String? = null
+    var accessToken: String? = null
+    var stateValue: String? = null
+    var scopeValue: String? = null
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mi_linked_in)
-        val intent = intent
         if (intent != null && intent.extras != null) {
-            val bundle = intent.extras
-            if (bundle!!.containsKey(KEY_LINKEDIN_CONTENT)) {
-                linkedInData = intent.getStringExtra(KEY_LINKEDIN_CONTENT)
+            if (intent.hasExtra(KeyUtils.CLIENT_ID)) {
+                clientId = intent.getStringExtra(KeyUtils.CLIENT_ID)
             }
-            if (bundle.containsKey(CLIENT_ID)) {
-                clientId = intent.getStringExtra(CLIENT_ID)
+            if (intent.hasExtra(KeyUtils.CLIENT_SECRET)) {
+                clientSecret = intent.getStringExtra(KeyUtils.CLIENT_SECRET)
             }
-            if (bundle.containsKey(CLIENT_SECRET)) {
-                clientSecret = intent.getStringExtra(CLIENT_SECRET)
+            if (intent.hasExtra(KeyUtils.REDIRECT_URI)) {
+                redirectUri = intent.getStringExtra(KeyUtils.REDIRECT_URI)
             }
-            if (bundle.containsKey(REDIRECT_URI)) {
-                redirectUri = intent.getStringExtra(REDIRECT_URI)
+            if (intent.hasExtra(KeyUtils.STATE_VALUE)) {
+                stateValue = intent.getStringExtra(KeyUtils.STATE_VALUE)
             }
-            if (bundle.containsKey(STATE_VALUE)) {
-                stateValue = intent.getStringExtra(STATE_VALUE)
+            if (intent.hasExtra(KeyUtils.SCOPE_VALUE_KEY)) {
+                scopeValue = intent.getStringExtra(KeyUtils.SCOPE_VALUE_KEY)
             }
         }
         cookieManager = CookieManager.getInstance()
@@ -90,9 +73,9 @@ class MiLinkedInActivity : AppCompatActivity() {
         val db = WebViewDatabase.getInstance(this)
         db.clearHttpAuthUsernamePassword()
         wvLinkIn.webViewClient = MyWebClient()
-        OAUTHURL =
-            "$COMMON_URL$RESPONSE_TYPE=$CODE&$CLIENT_ID_KEY=$clientId&$REDIRECT_URI_KEY=$redirectUri&$STATE=$stateValue&$SCOPE=$SCOPE_VALUE"
-        wvLinkIn.loadUrl(OAUTHURL)
+        oAuthUrl =
+            "$COMMON_URL$RESPONSE_TYPE=$CODE&$CLIENT_ID_KEY=$clientId&$REDIRECT_URI_KEY=$redirectUri&$STATE=$stateValue&$SCOPE=$scopeValue"
+        wvLinkIn.loadUrl(oAuthUrl)
     }
 
 
@@ -121,15 +104,16 @@ class MiLinkedInActivity : AppCompatActivity() {
 
         private fun handleUrl(url: String): Boolean {
             val uri = Uri.parse(url)
-            if (!uri.toString().contains(redirectUri)) {
+            if (!uri.toString().contains(redirectUri!!)) {
                 return false
             } else if (uri.getQueryParameter(ERROR) != null) {
-                wvLinkIn.loadUrl(OAUTHURL)
-                uri.getQueryParameter(ERROR)?.toString()?.let {
+                wvLinkIn.loadUrl(oAuthUrl)
+                uri.getQueryParameter(KeyUtils.ERROR_DESCRIPTION)?.toString()?.let {
                     ShowToastUtils.showToast(
-                        this@MiLinkedInActivity,
-                        it
+                        this@MiLinkedInActivity, it
                     )
+                    setResult(Activity.RESULT_CANCELED, Intent())
+                    finish()
                 }
                 return false
             } else if (uri.getQueryParameter(STATE) != stateValue) {
@@ -144,6 +128,7 @@ class MiLinkedInActivity : AppCompatActivity() {
             }
             return true
         }
+
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
             view?.settings?.useWideViewPort = false
@@ -156,11 +141,11 @@ class MiLinkedInActivity : AppCompatActivity() {
      * */
     private fun callAccessTokenApi(code: String) {
         val hashMap = HashMap<String, String>().apply {
-            put(ApiParam.CLIENT_ID, clientId)
+            clientId?.let { put(ApiParam.CLIENT_ID, it) }
             put(ApiParam.CODE, code)
-            put(ApiParam.REDIRECT_URI, redirectUri)
+            redirectUri?.let { put(ApiParam.REDIRECT_URI, it) }
             put(ApiParam.GRANT_TYPE, AUTHORIZATION_CODE)
-            put(ApiParam.CLIENT_SECRET, clientSecret)
+            clientSecret?.let { put(ApiParam.CLIENT_SECRET, it) }
         }
 
         WebApiClient.webApiTwitchAccessToken(ApiParam.BASE_URL)
@@ -171,7 +156,18 @@ class MiLinkedInActivity : AppCompatActivity() {
                         if (response.isSuccessful) {
                             if (response.body() != null) {
                                 accessToken = response.body()?.accessToken.toString()
-                                response.body()?.accessToken?.let { callUserDetailsApi(it) }
+                                if (scopeValue == KeyUtils.ONLY_PROFILE_SCOPE || scopeValue == KeyUtils.BOTH_EMAIL_USERDETAILS_SCOPE_VALUE) {
+                                    response.body()?.accessToken?.let { callUserDetailsApi(it) }
+                                } else  if(scopeValue == KeyUtils.ONLY_EMAIL_SCOPE || scopeValue == KeyUtils.BOTH_EMAIL_USERDETAILS_SCOPE_VALUE){
+                                    response.body()?.accessToken?.let { callUserEmailApi(it) }
+                                }
+                                else{
+                                    setResult(Activity.RESULT_CANCELED, Intent())
+                                    finish()
+                                }
+                            } else {
+                                setResult(Activity.RESULT_CANCELED, Intent())
+                                finish()
                             }
                         }
                     }
@@ -205,8 +201,18 @@ class MiLinkedInActivity : AppCompatActivity() {
                                     userDetailsResponse.profilePicture?.displayImageUrl?.elements?.get(0)
                                         ?.identifiers?.get(0)
                                         ?.identifier?.let { userDetails.image = it }
-                                    callUserEmailApi(accessToken)
+                                    if (scopeValue == KeyUtils.ONLY_EMAIL_SCOPE || scopeValue == KeyUtils.BOTH_EMAIL_USERDETAILS_SCOPE_VALUE) {
+                                        callUserEmailApi(accessToken)
+                                    } else {
+                                        val intent = Intent()
+                                        intent.putExtra(KEY_LINKEDIN_CONTENT, userDetails)
+                                        setResult(Activity.RESULT_OK, intent)
+                                        finish()
+                                    }
                                 }
+                            } else {
+                                setResult(Activity.RESULT_CANCELED, Intent())
+                                finish()
                             }
                         }
                     }

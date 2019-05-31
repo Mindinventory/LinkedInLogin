@@ -2,6 +2,7 @@ package com.mindinventory.linkedinlogin.data
 
 import android.os.Parcel
 import android.os.Parcelable
+import java.io.Serializable
 
 class LinkedInUserDetails() : Parcelable {
     var firstName: String? = null
