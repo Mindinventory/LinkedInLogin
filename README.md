@@ -1,4 +1,4 @@
-# Linkedin Login 
+# LinkedIn Login
 
 This provides the webview to Login with LinkedIn and getting callback to your activity or fragment
 
