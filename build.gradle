@@ -39,6 +39,7 @@ ext {
     rxandroid_version = '2.1.0'
     rxjava_version = '2.2.4'
     gson_verson='2.8.5'
+
 }
 
 task clean(type: Delete) {

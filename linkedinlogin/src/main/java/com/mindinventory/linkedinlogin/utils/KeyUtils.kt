@@ -1,4 +1,4 @@
-package com.mindinventory.linkedinlogin
+package com.mindinventory.linkedinlogin.utils
 
 const val ERROR="error"
 const val STATE="state"

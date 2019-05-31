@@ -1,7 +1,6 @@
-package com.mindinventory.linkedinlogin.response
+package com.mindinventory.linkedinlogin.data
 
 import com.google.gson.annotations.SerializedName
-
 
 class UserListResponse {
     var firstName: FirstName? = null
@@ -14,7 +13,8 @@ class UserListResponse {
     }
 
     class Localized {
-        var en_US: String? = null
+        @SerializedName("en_US")
+        var englishUs: String? = null
     }
 
     class LastName {
@@ -22,7 +22,6 @@ class UserListResponse {
     }
 
     class ProfilePicture {
-        var displayImage: String? = null
         @SerializedName("displayImage~")
         var displayImageUrl: DisplayImage? = null
     }
