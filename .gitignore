@@ -249,3 +249,4 @@ release/output.json
 src/main/res/values-ho/
 /linkedin.jks
 app/src/main/assets/
+/signinconfig.properties
