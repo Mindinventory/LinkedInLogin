@@ -1,10 +1,10 @@
-# Linkedin Login 
+# LinkedIn Login
 
-This provides the webview to Login with Linked in and getting callback to your activity or fragment
+This provides the webview to Login with LinkedIn and getting callback to your activity or fragment
 
 ### Key Features
 
-* Integrate Linkedin Login
+* Integrate LinkedIn Login
 
 # Usage
 
@@ -30,7 +30,7 @@ This provides the webview to Login with Linked in and getting callback to your a
     ```groovy
         dependencies {
             ...
-            implementation 'com.github.Mindinventory:LinkedInLogin:0.0.1'
+            implementation 'com.github.Mindinventory:LinkedInLogin:0.0.2'
         }
     ``` 
     
@@ -40,36 +40,40 @@ This provides the webview to Login with Linked in and getting callback to your a
     Step 1.Call MiLinkedinActivity from your activity class
     
     ```kotlin
-        MiLinkedInActivity.startLinkedInActivityForDetails(
-            this,
-            "CLIENT_ID",
-            "CLIENT_SECRET",
-            "REDIRECT_URI",
-            "STATE_VALUE"
-        )
+        val intent = LinkedInBuilder.Builder(this)
+                   .setClientId(getString(R.string.client_id)) //CLIENT_ID
+                   .setClientSecret(getString(R.string.client_secret)) //CLIENT_SECRET
+                   .setRedirectUri(getString(R.string.redirect_uri)) //REDIRECT_URI
+                   .setStateValue(getString(R.string.state_value)) //STATE_VALUE
+                   .setScopeValue(KeyUtils.BOTH_EMAIL_USERDETAILS_SCOPE_VALUE) //PASS_SCOPE_VALUE_HERE
+                   //For get only Email address pass scope value -->KeyUtils.ONLY_EMAIL_SCOPE
+                   //For get only user information pass scope value -->KeyUtils.ONLY_PROFILE_SCOPE
+                   //For get both email and user information pass scope value -->KeyUtils.BOTH_EMAIL_USERDETAILS_SCOPE_VALUE
+                   .build()
+        startActivityForResult(intent, KeyUtils.REQUEST_CODE)
     ```
     Step 2.Get data from onActivityResult Method
     
     ```kotlin
-        override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            MiLinkedInActivity.REQUEST_CODE -> {
-                val intent = data?.extras
-                if (intent != null) {
-                    when {
-                        intent.containsKey(MiLinkedInActivity.KEY_LINKEDIN_DETAIL_DATA) -> {
-                            val linkedInUser =
-                                data.getParcelableExtra<LinkedInUserDetails>(MiLinkedInActivity.KEY_LINKEDIN_DETAIL_DATA)
-                            if (linkedInUser != null) {
-                                // do what ever you want with details
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+       override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+           super.onActivityResult(requestCode, resultCode, data)
+           if (resultCode == Activity.RESULT_OK && data != null) {
+               when (requestCode) {
+                   KeyUtils.REQUEST_CODE -> {
+                       val linkedInUser =
+                           data.getParcelableExtra<LinkedInUserDetails>(KeyUtils.KEY_LINKEDIN_CONTENT)
+                       if (linkedInUser != null) {
+                           // use linkedinUser information
+                       } else {
+                           //handle the error
+                       }
+                   }
+               }
+           }
+           else{
+               //Login failed handle error
+           }
+       }
     
    ```
 ### Requirments   

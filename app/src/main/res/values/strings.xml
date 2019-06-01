@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">LinkedInSample</string>
+    <string name="client_id"> </string>
+    <string name="client_secret"> </string>
+    <string name="redirect_uri"> </string>
+    <string name="state_value"> </string>
 </resources>
