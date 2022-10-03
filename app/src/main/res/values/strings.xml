@@ -1,9 +1,7 @@
 <resources>
     <string name="app_name">LinkedInSample</string>
-    <string name="client_id">77w3izy6805wy0</string>
-    <string name="client_secret">xOvSPeYvBXi7AU7U</string>
-    <string name="redirect_uri">
-        https://linkedinsample.mindinventory.com/auth/linkedin/callback
-    </string>
-    <string name="state_value">1</string>
+    <string name="client_id"> </string>
+    <string name="client_secret"> </string>
+    <string name="redirect_uri"> </string>
+    <string name="state_value"> </string>
 </resources>
