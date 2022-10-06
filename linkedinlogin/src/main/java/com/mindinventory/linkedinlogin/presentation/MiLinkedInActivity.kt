@@ -75,7 +75,7 @@ class MiLinkedInActivity : AppCompatActivity() {
         wvLinkIn.webViewClient = MyWebClient()
         oAuthUrl =
             "$COMMON_URL$RESPONSE_TYPE=$CODE&$CLIENT_ID_KEY=$clientId&$REDIRECT_URI_KEY=$redirectUri&$STATE=$stateValue&$SCOPE=$scopeValue"
-        wvLinkIn.loadUrl(oAuthUrl)
+        wvLinkIn.loadUrl(oAuthUrl!!)
     }
 
 
@@ -107,7 +107,7 @@ class MiLinkedInActivity : AppCompatActivity() {
             if (!uri.toString().contains(redirectUri!!)) {
                 return false
             } else if (uri.getQueryParameter(ERROR) != null) {
-                wvLinkIn.loadUrl(oAuthUrl)
+                wvLinkIn.loadUrl(oAuthUrl!!)
                 uri.getQueryParameter(KeyUtils.ERROR_DESCRIPTION)?.toString()?.let {
                     ShowToastUtils.showToast(
                         this@MiLinkedInActivity, it
