@@ -1,6 +1,6 @@
 <a href="https://www.mindinventory.com/?utm_source=gthb&utm_medium=repo&utm_campaign=LinkedInLogin"><img src="https://github.com/Sammindinventory/MindInventory/blob/main/Banner.png"></a>
 
-# LinkedIn Login [![](https://jitpack.io/v/Mindinventory/LinkedInLogin.svg)](https://jitpack.io/#Mindinventory/LinkedInLogin) ![](https://img.shields.io/github/languages/top/Mindinventory/LinkedInLogin) ![](https://img.shields.io/github/license/mindinventory/LinkedInLogin)
+# LinkedIn Login [![](https://jitpack.io/v/Mindinventory/LinkedInLogin.svg)](https://jitpack.io/#Mindinventory/LinkedInLogin) ![](https://img.shields.io/github/languages/top/Mindinventory/LinkedInLogin) ![](https://img.shields.io/github/license/Mindinventory/LinkedInLogin)
 
 This provides the webview to Login with LinkedIn and getting callback to your activity or fragment
 
